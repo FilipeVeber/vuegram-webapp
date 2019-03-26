@@ -10,6 +10,10 @@ export const store = new Vuex.Store({
         userProfile: {}
     },
     actions: {
+        clearData({ commit }) {
+            commit('setCurrentUser', null);
+            commit('setUserProfile', {});
+        },
         fetchUserProfile({ commit, state }) {
             fb.usersCollection
                 .doc(state.currentUser.uid).get()
@@ -18,7 +22,7 @@ export const store = new Vuex.Store({
                 }).catch(err => {
                     console.log(err);
                 })
-        }
+        },
     },
     mutations: {
         setCurrentUser(state, val) {
@@ -26,6 +30,6 @@ export const store = new Vuex.Store({
         },
         setUserProfile(state, val) {
             state.userProfile = val
-        }
+        },
     }
 });
