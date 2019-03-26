@@ -121,7 +121,12 @@ export default {
         email: "",
         password: ""
       },
+      passwordForm: {
+        email: ""
+      },
       showLoginForm: true,
+      showForgotPassword: false,
+      passwordResetSuccess: false,
       performingRequest: false,
       errorMsg: ""
     };
@@ -130,6 +135,16 @@ export default {
     toggleForm() {
       this.errorMsg = "";
       this.showLoginForm = !this.showLoginForm;
+    },
+    togglePasswordReset() {
+      if (this.showForgotPassword) {
+        this.showLoginForm = true;
+        this.showForgotPassword = false;
+        this.passwordResetSuccess = false;
+      } else {
+        this.showLoginForm = false;
+        this.showForgotPassword = true;
+      }
     },
     login() {
       this.performingRequest = true;
@@ -172,7 +187,7 @@ export default {
             .then(() => {
               this.$store.dispatch("fetchUserProfile");
               this.performingRequest = true;
-              this.$$router.push("/dashboard");
+              this.$router.push("/dashboard");
             })
             .catch(err => {
               this.performingRequest = false;
@@ -181,6 +196,23 @@ export default {
         })
         .catch(err => {
           console.log(err);
+        });
+    },
+    resetPassword() {
+      this.performingRequest = true;
+
+      fb.auth
+        .sendPasswordResetEmail(this.passwordForm.email)
+        .then(() => {
+          this.passwordResetSuccess = true;
+          this.passwordForm.email = "";
+        })
+        .catch(err => {
+          console.log(err);
+          this.errorMsg = err.message;
+        })
+        .finally(() => {
+          this.performingRequest = false;
         });
     }
   }
